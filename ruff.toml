@@ -1,0 +1,6 @@
+# Ruff: fast linter and import sorter (not covered in the sessional).
+line-length = 100
+target-version = "py310"
+
+[lint]
+select = ["E", "F", "I"]
