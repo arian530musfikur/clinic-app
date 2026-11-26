@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <div>
+    <h1>Admin</h1>
+    <p>Approve new doctor and admin requests, edit doctor profiles, and add doctors directly.</p>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="num">{{ requests|length }}</div><div class="label">Pending requests</div></div>
+  <div class="stat"><div class="num">{{ doctors|length }}</div><div class="label">Doctors</div></div>
+  <div class="stat"><div class="num">{{ booking_count }}</div><div class="label">Bookings</div></div>
+</div>
+
+<section class="panel">
+  <h2>Pending requests</h2>
+  {% if requests %}
+    <table class="table">
+      <thead><tr><th>Type</th><th>Name</th><th>Username</th><th>Details</th><th>Decision</th></tr></thead>
+      <tbody>
+      {% for u, d in requests %}
+        <tr>
+          <td><span class="pill pending">{{ u.role|capitalize }}</span></td>
+          <td>{{ u.full_name }}</td>
+          <td>{{ u.username }}</td>
+          <td>{% if d %}{{ d.specialty }}, {{ d.hospital }}<br><span class="muted">{{ d.times }}</span>{% else %}Admin account{% endif %}</td>
+          <td class="actions">
+            <form method="post" action="{{ url_for('decide_request', user_id=u.id, action='approve') }}">
+              <button class="small ok" type="submit">Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('decide_request', user_id=u.id, action='reject') }}">
+              <button class="small danger" type="submit">Reject</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="empty">No pending requests. Everything is up to date.</p>
+  {% endif %}
+</section>
+
+<section class="layout">
+  <div>
+    <h2>Doctors</h2>
+    {% for d in doctors %}
+    <details class="doc-row">
+      <summary>{{ d.name }} <span class="muted">· {{ d.specialty }} · {{ d.hospital }}</span>
+        <span class="pill {{ d.status }}">{{ d.status|capitalize }}</span></summary>
+      <form method="post" action="{{ url_for('edit_doctor', doctor_id=d.id) }}" class="book-form">
+        <label>Specialty <input name="specialty" value="{{ d.specialty }}" required></label>
+        <label>Clinic or hospital <input name="hospital" value="{{ d.hospital }}" required></label>
+        <label>Checkup times <input name="times" value="{{ d.times }}" required></label>
+        <button type="submit">Save changes</button>
+      </form>
+    </details>
+    {% endfor %}
+  </div>
+
+  <aside class="panel">
+    <h2>Add a doctor</h2>
+    <p class="muted small">Added doctors are approved at once.</p>
+    <form method="post" action="{{ url_for('add_doctor') }}" class="book-form">
+      <label>Full name <input name="name" required placeholder="Dr. Full Name"></label>
+      <label>Specialty <input name="specialty" required placeholder="Cardiology"></label>
+      <label>Clinic or hospital <input name="hospital" required placeholder="City Hospital"></label>
+      <label>Checkup times <input name="times" required placeholder="09:00,10:00,11:00"></label>
+      <h3>Doctor login (optional)</h3>
+      <label>Username <input name="username" autocomplete="off"></label>
+      <label>Password (at least 6 characters)
+        <input type="password" name="password" minlength="6" autocomplete="new-password">
+      </label>
+      <button type="submit">Add doctor</button>
+    </form>
+  </aside>
+</section>
+{% endblock %}

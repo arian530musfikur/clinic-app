@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <div>
+    <h1>Create an account</h1>
+    <p>Choose the account that fits your role.</p>
+  </div>
+</section>
+<div class="role-grid">
+  <article class="role-card">
+    <span class="pill approved">Active at once</span>
+    <h2>Patient</h2>
+    <p>Search doctors, book a checkup time, see your bookings, and cancel when needed.</p>
+    <a class="button-link" href="{{ url_for('register', role='patient') }}">Patient sign up</a>
+  </article>
+  <article class="role-card">
+    <span class="pill pending">Needs admin approval</span>
+    <h2>Doctor</h2>
+    <p>Create your profile with specialty, clinic, and checkup times. Patients see you after approval.</p>
+    <a class="button-link" href="{{ url_for('register', role='doctor') }}">Doctor sign up</a>
+  </article>
+  <article class="role-card">
+    <span class="pill pending">Needs admin approval</span>
+    <h2>Admin</h2>
+    <p>Review doctor and admin requests and manage doctor profiles. An existing admin approves you.</p>
+    <a class="button-link secondary" href="{{ url_for('register', role='admin') }}">Admin sign up</a>
+  </article>
+</div>
+{% endblock %}

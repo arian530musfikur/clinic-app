@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Log in</h1>
+  <form method="post" class="book-form">
+    <fieldset class="role-tabs">
+      <legend>I am logging in as</legend>
+      {% for value, label in [('patient', 'Patient'), ('doctor', 'Doctor'), ('admin', 'Admin')] %}
+      <label><input type="radio" name="role" value="{{ value }}"
+             {% if selected_role == value %}checked{% endif %}> {{ label }}</label>
+      {% endfor %}
+    </fieldset>
+    <label>Username
+      <input name="username" required autocomplete="username">
+    </label>
+    <label>Password
+      <input type="password" name="password" required autocomplete="current-password">
+    </label>
+    <button type="submit">Log in</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('register_choice') }}">Create an account</a></p>
+  <p class="muted small">Demo logins: doctor karim / doctor123, admin admin / admin123.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">{% if current_user %}Hello, {{ current_user.full_name }}{% else %}Clinic appointments{% endif %}</p>
+    <h1>{% if current_user and current_user.role == 'doctor' %}Your patients and profile
+        {% elif current_user and current_user.role == 'admin' %}Review requests and doctors
+        {% else %}Book a doctor in a few clicks{% endif %}</h1>
+    <p>Search by name or specialty to find a doctor and their checkup times.</p>
+    <form class="search" method="get" action="{{ url_for('index') }}" role="search">
+      <input type="search" name="q" value="{{ query }}"
+             placeholder="Try cardiology or Dr. Karim" aria-label="Search doctors">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</section>
+
+{% if stats %}
+<div class="stats">
+  {% for s in stats %}
+  <div class="stat"><div class="num">{{ s['value'] }}</div><div class="label">{{ s['label'] }}</div></div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<section class="layout">
+  <div>
+    <h2>{% if query %}Results for "{{ query }}"{% else %}Our doctors{% endif %}</h2>
+    {% if doctors %}
+      <div class="cards">
+        {% for d in doctors %}
+        <article class="card">
+          <div class="card-head"><span class="avatar small">{{ d.name|replace('Dr. ', '')|truncate(1, true, '')|upper }}</span>
+            <div><h3>{{ d.name }}</h3><p class="specialty">{{ d.specialty }}</p></div></div>
+          <p class="muted">{{ d.hospital }}</p>
+          <p class="slots">Checkup times: {{ d.time_list|join(", ") }}</p>
+        </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty">No doctors match "{{ query }}". Try a different name or specialty.</p>
+    {% endif %}
+  </div>
+
+  <aside class="panel" id="book">
+    {% if current_user and current_user.role == 'patient' %}
+      <h2>Book an appointment</h2>
+      <p class="muted">Booking as {{ current_user.full_name }}.</p>
+      <form method="post" action="{{ url_for('book') }}" class="book-form">
+        <label>Doctor
+          <select name="doctor" required>
+            {% for d in all_doctors %}
+            <option value="{{ d.name }}">{{ d.name }} ({{ d.specialty }})</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Time
+          <select name="time" required>
+            {% for s in slots %}
+            <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <p class="muted small">The time must be one of the doctor's checkup times.</p>
+        <button type="submit">Confirm booking</button>
+      </form>
+    {% elif current_user and current_user.role == 'admin' %}
+      <h2>Admin tools</h2>
+      <p class="muted">Approve doctor and admin requests, and manage doctor profiles.</p>
+      <a class="button-link" href="{{ url_for('admin_page') }}">Open Admin</a>
+    {% elif current_user %}
+      <h2>Doctor account</h2>
+      <p class="muted">Patients book with you by name. Keep your clinic and checkup times up to date.</p>
+      <div class="actions">
+        <a class="button-link" href="{{ url_for('my_patients') }}">My patients</a>
+        <a class="button-link secondary" href="{{ url_for('doctor_profile') }}">My profile</a>
+      </div>
+    {% else %}
+      <h2>Book an appointment</h2>
+      <p class="muted">Create a free patient account or log in to book.</p>
+      <div class="actions">
+        <a class="button-link" href="{{ url_for('register', role='patient') }}">Create account</a>
+        <a class="button-link secondary" href="{{ url_for('login') }}">Log in</a>
+      </div>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}
