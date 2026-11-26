@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}My patients{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <div>
+    <h1>{{ doctor.name }}</h1>
+    <p>{{ doctor.specialty }} at {{ doctor.hospital }}. Only your own patients appear here.</p>
+  </div>
+  <a class="button-link secondary" href="{{ url_for('doctor_profile') }}">Edit profile</a>
+</section>
+<div class="stats">
+  <div class="stat"><div class="num">{{ appointments|length }}</div><div class="label">Booked patients</div></div>
+  <div class="stat"><div class="num">{{ doctor.time_list|length }}</div><div class="label">Checkup times a day</div></div>
+</div>
+<h2>Booked patients</h2>
+{% if appointments %}
+  <table class="table">
+    <thead><tr><th>Time</th><th>Patient</th></tr></thead>
+    <tbody>
+    {% for a in appointments %}
+      <tr><td>{{ a.time }}</td><td>{{ a.patient }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">No patients booked with you yet.</p>
+{% endif %}
+{% endblock %}

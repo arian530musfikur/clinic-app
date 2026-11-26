@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <div>
+    <h1>My profile</h1>
+    <p>Patients see these details when they search. Changes take effect immediately.</p>
+  </div>
+  <span class="pill {{ doctor.status }}">{{ doctor.status|capitalize }}</span>
+</section>
+<section class="panel narrow">
+  <form method="post" class="book-form">
+    <label>Specialty
+      <input name="specialty" value="{{ doctor.specialty }}" required>
+    </label>
+    <label>Clinic or hospital
+      <input name="hospital" value="{{ doctor.hospital }}" required>
+    </label>
+    <label>Checkup times (comma separated, 24-hour)
+      <input name="times" value="{{ doctor.times }}" required>
+    </label>
+    <button type="submit">Save profile</button>
+  </form>
+</section>
+{% endblock %}

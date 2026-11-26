@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}My appointments{% endblock %}
+{% block content %}
+<section class="hero compact">
+  <div>
+    <h1>My appointments</h1>
+    <p>Your bookings. Cancel one to free the time for other patients.</p>
+  </div>
+</section>
+<div class="stats">
+  <div class="stat"><div class="num">{{ appointments|length }}</div><div class="label">Booked appointments</div></div>
+</div>
+{% if appointments %}
+  <table class="table">
+    <thead><tr><th>#</th><th>Doctor</th><th>Time</th><th></th></tr></thead>
+    <tbody>
+    {% for a in appointments %}
+      <tr>
+        <td>{{ a.id }}</td><td>{{ a.doctor }}</td><td>{{ a.time }}</td>
+        <td>
+          <form method="post" action="{{ url_for('cancel_appointment', appt_id=a.id) }}"
+                onsubmit="return confirm('Cancel this appointment?');">
+            <button type="submit" class="small danger">Cancel</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">You have no appointments yet. <a href="{{ url_for('index') }}">Find a doctor</a>.</p>
+{% endif %}
+{% endblock %}
